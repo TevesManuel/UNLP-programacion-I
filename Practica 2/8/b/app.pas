@@ -14,7 +14,7 @@ var
 begin
 
     lenght := 0;
-    wordCounter := 1;//Tiene en cuenta la ultima palabra que termina con '.' y no con ' '
+    wordCounter := 1;//Tiene en cuenta la ultima palabra que termina con 'z' y no con ' '
     RWordsCounter := 0;
 
     Write('Introducir una secuencia de caracteres: ');
