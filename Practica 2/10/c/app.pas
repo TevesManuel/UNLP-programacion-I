@@ -22,7 +22,7 @@ begin
 
     Write('Introducir una cadena de caracteres: ');
     read(character);
-    lastCharacter := character;
+    lastCharacter := ' ';
     
     while (character <> '#') do
         begin
