@@ -1,4 +1,4 @@
-procedure averageYearsOld(n: integer);
+procedure averageYearsOld(n: integer; var average: real);
 var
     i: integer;
     input: integer;
@@ -11,9 +11,12 @@ begin
             Readln(input);
             total := total + input;
         end;
-    Writeln('El promedio de edad es ', (total/n):2:2);
+    average := total/n;
 end;
 
+var
+    average: real;
 begin
-    averageYearsOld(25);
+    averageYearsOld(2, average);
+    WriteLn('El promedio de edades es ', average:2:2);
 end.
