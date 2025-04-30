@@ -10,10 +10,10 @@ procedure vectorSet(var v: vector; n: integer; i: integer);
 var
     it : integer;
 begin
-    // for it := (SIZE-1) downto i do
-    //     begin
-    //         v[it] := v[it-1];
-    //     end;
+    for it := (SIZE) downto i do
+        begin
+            v[it] := v[it-1];
+        end;
     v[i] := n;
 end;
 
