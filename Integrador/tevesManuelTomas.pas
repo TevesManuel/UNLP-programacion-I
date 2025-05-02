@@ -1,6 +1,7 @@
 program tevesManuelTomas;
 const
     MAX_FABRICANTES = 30;
+    CANTIDAD_COMPETENCIAS = 4;
 
 type
     TFabricante = record
@@ -9,6 +10,36 @@ type
     end;
 
     TFabricantes = array[1..MAX_FABRICANTES] of TFabricante;
+
+    TRobot = record
+        codigo: string[18];
+        ID: integer;
+        nombre: string[70];
+        fabricante: string[70];
+        fabricanteCUIT: integer;
+        puntajes: array[0..CANTIDAD_COMPETENCIAS] of integer;
+    end;
+
+function sumatoriaDigitos(n: integer): integer;
+var
+    total: integer;
+begin
+    total := 0;
+    while (n > 0) do
+        begin
+            total := total + n mod 10;
+            n := n div 10;
+        end;
+    sumatoriaDigitos := total;
+end;
+
+function validarID(robot: TRobot): boolean;
+begin
+    if( sumatoriaDigitos(robot.ID) > sumatoriaDigitos(robot.fabricanteCUIT) ) then
+        validarID := true
+    else
+        validarID := false;
+end;
 
 const
     FABRICANTES: TFabricantes = (
@@ -44,6 +75,12 @@ const
         (nombre: 'TechPioneers'; antiguedad: 10)
     );
 
+var
+    robot: TRobot;
 begin
-    Writeln('Test');
+
+    robot.codigo := 'ABC12345677B4574AC';// ABC123 45677 B4574AC
+    robot.id := 123;
+    robot.fabricanteCUIT := 211;
+    Writeln(validarID(robot)); // TRUE
 end.
