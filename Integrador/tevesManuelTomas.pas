@@ -2,7 +2,6 @@ program tevesManuelTomas;
 const
     MAX_FABRICANTES = 30;
     CANTIDAD_COMPETENCIAS = 4;
-
 type
     TFabricante = record
         nombre: string[70];
@@ -39,6 +38,93 @@ begin
         validarID := true
     else
         validarID := false;
+end;
+
+function esMayus(character: char): boolean;
+begin
+    esMayus := ( character >= 'A' ) and ( character <= 'Z' );
+end;
+
+function esNum(character: char): boolean;
+begin
+    esNum := ( character >= '1' ) and ( character <= '9' );
+end;
+
+function validarCodigo(robot: TRobot): boolean;
+var
+    i: integer;
+    i2: integer;
+    salida: boolean;
+    mayusCount: integer;
+    numbersCount: integer;
+    aNum: array[0..2] of char;
+    lastBNum: char;
+    lastChar: char;
+    AB: boolean;
+begin
+    salida := true;
+    i := 1;
+    mayusCount := 0;
+    numbersCount := 0;
+    lastBNum := '0';
+    AB := false;
+
+    while ( ( i <= 18 ) and salida ) do
+        begin
+            if( i <= 6 ) then
+                begin
+                    if ( esMayus(robot.codigo[i]) ) then
+                        begin
+                            mayusCount := mayusCount + 1;
+                        end
+                    else if ( esNum(robot.codigo[i]) ) then
+                        begin
+                            aNum[numbersCount] := robot.codigo[i];
+                            numbersCount := numbersCount + 1;
+                        end
+                    else
+                        salida := false; 
+                end;
+
+            if( i = 6) then
+                begin
+                    if( not (( mayusCount >= 2 ) and ( numbersCount >= 2 )) ) then
+                        salida := false;
+                end;
+            
+            if( (i > 6) and (i <= 11)) then
+                begin
+                    for i2 := 0 to (numbersCount-1) do
+                        begin
+                            if(aNum[i2] = robot.codigo[i]) then
+                                salida := false;
+                        end;
+                    if robot.codigo[i] < lastBNum then
+                        salida := false;
+                    lastBNum := robot.codigo[i];
+                end;
+            
+            if( i > 11 ) then
+                begin
+                    for i2 := 0 to (numbersCount-1) do
+                    begin
+                        if(aNum[i2] = robot.codigo[i]) then
+                            salida := false;
+                        if(robot.codigo[i] = 'B') then
+                            begin
+                                if lastChar = 'A' then
+                                    AB := true
+                                else
+                                    salida := false;
+                            end;
+                    end;
+                end;
+
+            lastChar := robot.codigo[i];
+            i := i + 1;
+        end;
+    
+    validarCodigo := (salida and AB);
 end;
 
 const
@@ -79,8 +165,26 @@ var
     robot: TRobot;
 begin
 
-    robot.codigo := 'ABC12345677B4574AC';// ABC123 45677 B4574AC
+    robot.codigo := 'ABC12345677AB4574C';// ABC123 45677 B4574AC
     robot.id := 123;
     robot.fabricanteCUIT := 211;
     Writeln(validarID(robot)); // TRUE
+    // robot.id := 211;
+    // robot.fabricanteCUIT := 123;
+    // Writeln(validarID(robot)); // FALSE
+    Writeln(validarCodigo(robot)); // TRUE
+    // robot.codigo := 'ABC12345677BA4574C';// ABC123 45677 B4574AC
+    // Writeln(validarCodigo(robot)); // FALSE
+    // robot.codigo := 'ABC12345677BA4274C';// ABC123 45677 B4574AC
+    // Writeln(validarCodigo(robot)); // FALSE
+    // robot.codigo := 'ABC12325677B4574AC';// ABC123 25677 B4574AC
+    // Writeln(validarCodigo(robot)); // FALSE
+    // robot.codigo := 'ABC12354677B4574AC';// ABC123 54677 B4574AC
+    // Writeln(validarCodigo(robot)); // FALSE
+    // robot.codigo := 'A3412345677B4574AC';// A34123 45677 B4574AC
+    // Writeln(validarCodigo(robot)); // FALSE
+    // robot.codigo := 'ABCDE345677B4574AC';// ABCDE3 45677 B4574AC
+    // Writeln(validarCodigo(robot)); // FALSE
+    // robot.codigo := 'ABC12345677B4574AC';// ABC123 45677 B4574AC
+
 end.
