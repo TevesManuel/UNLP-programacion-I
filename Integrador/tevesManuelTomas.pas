@@ -19,6 +19,8 @@ type
         puntajes: array[0..CANTIDAD_COMPETENCIAS] of integer;
     end;
 
+// <- 1_Validación de ID del robot
+
 function sumatoriaDigitos(n: integer): integer;
 var
     total: integer;
@@ -40,6 +42,9 @@ begin
         validarID := false;
 end;
 
+// 1_Validación de ID del robot ->
+
+// <- 2_Validación del código de robot
 function esMayus(character: char): boolean;
 begin
     esMayus := ( character >= 'A' ) and ( character <= 'Z' );
@@ -68,6 +73,7 @@ begin
     numbersCount := 0;
     lastBNum := '0';
     AB := false;
+    lastChar := ' ';
 
     while ( ( i <= 18 ) and salida ) do
         begin
@@ -127,6 +133,37 @@ begin
     validarCodigo := (salida and AB);
 end;
 
+// 2_Validación del código de robot ->
+
+// <- 3_Verificación de fabricante habilitado
+
+procedure verificarFabricanteHabilitado(fabricantes: TFabricantes; fabricante: string; minAntiguedad: integer; var out: boolean);
+var
+    index: integer;
+    lastIndex: integer;
+    copyIndex: integer;
+begin
+    out := false;
+    lastIndex := 0;
+    copyIndex := 0;
+    index := MAX_FABRICANTES div 2;
+    while(abs(lastIndex-index) > 1) do
+        begin
+            copyIndex := index;
+            Writeln('index: ', index, ' lastIndex: ', lastIndex);
+            Writeln('1: ', fabricantes[index].nombre[1], ' 2: ', fabricante[1]);
+            if(fabricantes[index].nombre[1] < fabricante[1]) then
+                index := index + (abs(index - lastIndex) div 2)
+            else if(fabricantes[index].nombre[1] > fabricante[1]) then
+                index := index - (abs(index - lastIndex) div 2)
+            else
+                out := true;
+            lastIndex := copyIndex;
+        end;
+end;
+
+// 3_Verificación de fabricante habilitado ->
+
 const
     FABRICANTES: TFabricantes = (
         (nombre: 'AI Creators'; antiguedad: 9),
@@ -163,16 +200,20 @@ const
 
 var
     robot: TRobot;
+    out: boolean;
 begin
 
     robot.codigo := 'ABC12345677AB4574C';// ABC123 45677 B4574AC
     robot.id := 123;
     robot.fabricanteCUIT := 211;
-    Writeln(validarID(robot)); // TRUE
+    //1_Validación de ID del robot 
+    // Writeln(validarID(robot)); // TRUE
     // robot.id := 211;
     // robot.fabricanteCUIT := 123;
     // Writeln(validarID(robot)); // FALSE
-    Writeln(validarCodigo(robot)); // TRUE
+    
+    //2_Validación del código de robot
+    // Writeln(validarCodigo(robot)); // TRUE
     // robot.codigo := 'ABC12345677BA4574C';// ABC123 45677 B4574AC
     // Writeln(validarCodigo(robot)); // FALSE
     // robot.codigo := 'ABC12345677BA4274C';// ABC123 45677 B4574AC
@@ -187,4 +228,7 @@ begin
     // Writeln(validarCodigo(robot)); // FALSE
     // robot.codigo := 'ABC12345677B4574AC';// ABC123 45677 B4574AC
 
+    // 3_Verificación de fabricante habilitado
+    verificarFabricanteHabilitado(fabricantes, 'SynthTech', 12, out);
+    Writeln(out);
 end.
