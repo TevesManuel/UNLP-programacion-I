@@ -139,26 +139,24 @@ end;
 
 procedure verificarFabricanteHabilitado(fabricantes: TFabricantes; fabricante: string; minAntiguedad: integer; var out: boolean);
 var
+    lowerEnd: integer;
+    upperEnd: integer;
     index: integer;
-    lastIndex: integer;
-    copyIndex: integer;
 begin
     out := false;
-    lastIndex := 0;
-    copyIndex := 0;
-    index := MAX_FABRICANTES div 2;
-    while(abs(lastIndex-index) > 1) do
+    lowerEnd := 0;
+    upperEnd := MAX_FABRICANTES;
+    while ( ((upperEnd-lowerEnd)  > 1 ) and not out ) do
         begin
-            copyIndex := index;
-            Writeln('index: ', index, ' lastIndex: ', lastIndex);
-            Writeln('1: ', fabricantes[index].nombre[1], ' 2: ', fabricante[1]);
-            if(fabricantes[index].nombre[1] < fabricante[1]) then
-                index := index + (abs(index - lastIndex) div 2)
-            else if(fabricantes[index].nombre[1] > fabricante[1]) then
-                index := index - (abs(index - lastIndex) div 2)
+            index := lowerEnd + ((upperEnd-lowerEnd) div 2);
+            if(fabricantes[index].nombre < fabricante) then
+                lowerEnd := index
+            else if(fabricantes[index].nombre > fabricante) then
+                upperEnd := index         
+            else if(fabricantes[index].antiguedad >= minAntiguedad) then
+                out := true
             else
-                out := true;
-            lastIndex := copyIndex;
+                upperEnd := lowerEnd;
         end;
 end;
 
@@ -229,6 +227,8 @@ begin
     // robot.codigo := 'ABC12345677B4574AC';// ABC123 45677 B4574AC
 
     // 3_Verificación de fabricante habilitado
-    verificarFabricanteHabilitado(fabricantes, 'SynthTech', 12, out);
+    verificarFabricanteHabilitado(fabricantes, 'SynthTech', 4, out); // TRUE
+    // verificarFabricanteHabilitado(fabricantes, 'SynthTeche', 4, out); // FALSE
+    // verificarFabricanteHabilitado(fabricantes, 'SynthTech', 12, out); // FALSE
     Writeln(out);
 end.
