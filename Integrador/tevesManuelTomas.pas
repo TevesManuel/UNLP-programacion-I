@@ -1,7 +1,12 @@
 program tevesManuelTomas;
+
 const
     MAX_FABRICANTES = 30;
-    CANTIDAD_COMPETENCIAS = 4;
+    CANTIDAD_COMPETENCIAS = 10;
+    NOMBRE_CORTE_INSCRIPCION = 'DEEPLEARN';
+    MIN_ANTIGUEDAD_FABRICANTE = 3;
+    PUNTO_4_a_O_b = false;
+
 type
     TFabricante = record
         nombre: string[70];
@@ -10,14 +15,56 @@ type
 
     TFabricantes = array[1..MAX_FABRICANTES] of TFabricante;
 
+    TListaPuntaje = ^ TNodoPuntaje;
+    TNodoPuntaje = record
+        dato: integer;
+        sig: TListaPuntaje;
+    end;
+
     TRobot = record
         codigo: string[18];
         ID: integer;
         nombre: string[70];
         fabricante: string[70];
         fabricanteCUIT: integer;
-        puntajes: array[0..CANTIDAD_COMPETENCIAS] of integer;
+        puntaje_array: array[0..CANTIDAD_COMPETENCIAS] of integer;
+        puntaje_lista: TListaPuntaje;
     end;
+
+const
+    FABRICANTES: TFabricantes = (
+        (nombre: 'AI Creators'; antiguedad: 9),
+        (nombre: 'AI Dynamics'; antiguedad: 12),
+        (nombre: 'AI Innovators'; antiguedad: 4),
+        (nombre: 'AI Pioneers'; antiguedad: 9),
+        (nombre: 'AutoGenius'; antiguedad: 11),
+        (nombre: 'AutoMech'; antiguedad: 14),
+        (nombre: 'CyberAndroids'; antiguedad: 7),
+        (nombre: 'CyberWorks'; antiguedad: 10),
+        (nombre: 'EvoBots'; antiguedad: 7),
+        (nombre: 'EvoMech'; antiguedad: 8),
+        (nombre: 'FutureBots'; antiguedad: 10),
+        (nombre: 'FutureMinds'; antiguedad: 5),
+        (nombre: 'MechSolutions'; antiguedad: 12),
+        (nombre: 'NanoBots Co.'; antiguedad: 6),
+        (nombre: 'NanoMinds'; antiguedad: 7),
+        (nombre: 'NeuraBotics'; antiguedad: 8),
+        (nombre: 'NextGen Androids'; antiguedad: 6),
+        (nombre: 'NextGen Robotics'; antiguedad: 3),
+        (nombre: 'Quantum Robotics'; antiguedad: 5),
+        (nombre: 'QuantumAndroids'; antiguedad: 4),
+        (nombre: 'RoboGenius'; antiguedad: 13),
+        (nombre: 'RoboInnovators'; antiguedad: 3),
+        (nombre: 'RoboMasters'; antiguedad: 6),
+        (nombre: 'RoboTech Inc.'; antiguedad: 15),
+        (nombre: 'SmartAndroids'; antiguedad: 8),
+        (nombre: 'SmartBots'; antiguedad: 5),
+        (nombre: 'SynthMind'; antiguedad: 9),
+        (nombre: 'SynthTech'; antiguedad: 8),
+        (nombre: 'TechHumanoid'; antiguedad: 11),
+        (nombre: 'TechPioneers'; antiguedad: 10)
+    );
+
 
 // <- 1_Validación de ID del robot
 
@@ -137,70 +184,145 @@ end;
 
 // <- 3_Verificación de fabricante habilitado
 
-procedure verificarFabricanteHabilitado(fabricantes: TFabricantes; fabricante: string; minAntiguedad: integer; var out: boolean);
+procedure verificarFabricanteHabilitado(fabricantes: TFabricantes; fabricante: string; minAntiguedad: integer; var salida: boolean);
 var
-    lowerEnd: integer;
-    upperEnd: integer;
+    limiteInferior: integer;
+    limiteSuperior: integer;
     index: integer;
 begin
-    out := false;
-    lowerEnd := 0;
-    upperEnd := MAX_FABRICANTES;
-    while ( ((upperEnd-lowerEnd)  > 1 ) and not out ) do
+    salida := false;
+    limiteInferior := 0;
+    limiteSuperior := MAX_FABRICANTES;
+    while ( ((limiteSuperior-limiteInferior)  > 1 ) and not salida ) do
         begin
-            index := lowerEnd + ((upperEnd-lowerEnd) div 2);
+            index := limiteInferior + ((limiteSuperior-limiteInferior) div 2);
             if(fabricantes[index].nombre < fabricante) then
-                lowerEnd := index
+                limiteInferior := index
             else if(fabricantes[index].nombre > fabricante) then
-                upperEnd := index         
+                limiteSuperior := index         
             else if(fabricantes[index].antiguedad >= minAntiguedad) then
-                out := true
+                salida := true
             else
-                upperEnd := lowerEnd;
+                limiteSuperior := limiteInferior;
         end;
 end;
 
 // 3_Verificación de fabricante habilitado ->
 
-const
-    FABRICANTES: TFabricantes = (
-        (nombre: 'AI Creators'; antiguedad: 9),
-        (nombre: 'AI Dynamics'; antiguedad: 12),
-        (nombre: 'AI Innovators'; antiguedad: 4),
-        (nombre: 'AI Pioneers'; antiguedad: 9),
-        (nombre: 'AutoGenius'; antiguedad: 11),
-        (nombre: 'AutoMech'; antiguedad: 14),
-        (nombre: 'CyberAndroids'; antiguedad: 7),
-        (nombre: 'CyberWorks'; antiguedad: 10),
-        (nombre: 'EvoBots'; antiguedad: 7),
-        (nombre: 'EvoMech'; antiguedad: 8),
-        (nombre: 'FutureBots'; antiguedad: 10),
-        (nombre: 'FutureMinds'; antiguedad: 5),
-        (nombre: 'MechSolutions'; antiguedad: 12),
-        (nombre: 'NanoBots Co.'; antiguedad: 6),
-        (nombre: 'NanoMinds'; antiguedad: 7),
-        (nombre: 'NeuraBotics'; antiguedad: 8),
-        (nombre: 'NextGen Androids'; antiguedad: 6),
-        (nombre: 'NextGen Robotics'; antiguedad: 3),
-        (nombre: 'Quantum Robotics'; antiguedad: 5),
-        (nombre: 'QuantumAndroids'; antiguedad: 4),
-        (nombre: 'RoboGenius'; antiguedad: 13),
-        (nombre: 'RoboInnovators'; antiguedad: 3),
-        (nombre: 'RoboMasters'; antiguedad: 6),
-        (nombre: 'RoboTech Inc.'; antiguedad: 15),
-        (nombre: 'SmartAndroids'; antiguedad: 8),
-        (nombre: 'SmartBots'; antiguedad: 5),
-        (nombre: 'SynthMind'; antiguedad: 9),
-        (nombre: 'SynthTech'; antiguedad: 8),
-        (nombre: 'TechHumanoid'; antiguedad: 11),
-        (nombre: 'TechPioneers'; antiguedad: 10)
-    );
+// <- 4_Simulacion de inscripcion
+
+procedure agregarPuntaje(var lista: TListaPuntaje; newData: integer);
+var
+
+    actual: TListaPuntaje;
+    nuevaLista: TListaPuntaje;
+
+begin
+
+    new(nuevaLista);
+    nuevaLista^.dato := newData;
+    nuevaLista^.sig := Nil;
+
+    if ( lista <> Nil ) then
+        begin
+            
+            actual := lista;
+            
+            while ( actual^.sig <> Nil ) do
+                actual := actual^.sig;
+            
+            actual^.sig := nuevaLista;
+
+        end
+    else
+        lista := nuevaLista;
+
+end;
+
+
+procedure inscribirRobot(fabricantes: TFabricantes);
+var
+    robot: TRobot;
+    IDvalido: boolean;
+    codigoValido: boolean;
+    fabricanteHabilitado: boolean;
+    i: integer;
+    corte: boolean;
+    entrada: integer;
+begin
+    robot.nombre := '';
+    while robot.nombre <> NOMBRE_CORTE_INSCRIPCION do
+        begin
+            robot.codigo := '';
+            robot.id := 0;
+            robot.fabricanteCUIT := 0;
+            IDvalido := false;
+            codigoValido := false;
+            Writeln('Introducir el codigo de el robot: ');
+            Readln(robot.codigo);
+            Writeln('Introducir el ID el robot: ');
+            Readln(robot.id);
+            Writeln('Introducir el CUIT del fabricante el robot: ');
+            Readln(robot.fabricanteCUIT);
+            Writeln('Introducir el nombre de el fabricante: ');
+            Readln(robot.fabricante);
+            
+            IDvalido := validarID(robot);
+            if not IDvalido then
+                begin
+                    Writeln('[!] El ID no es valido.');
+                end;
+            
+            codigoValido := validarCodigo(robot);
+            if not codigoValido then
+                begin
+                    Writeln('[!] El codigo no es valido.');
+                end;
+            
+            verificarFabricanteHabilitado(fabricantes, robot.fabricante, MIN_ANTIGUEDAD_FABRICANTE, fabricanteHabilitado);
+            if not fabricanteHabilitado then
+                begin
+                    Writeln('[!] El fabricante no esta habilitado.');
+                end;
+
+            if (IDvalido and codigoValido and fabricanteHabilitado) then
+                begin
+
+                    if not PUNTO_4_a_O_b then
+                        begin
+                            //3.a)
+                            for i := 0 to CANTIDAD_COMPETENCIAS do
+                                begin
+                                    Write('Ingrese el puntaje de la competencia ', i, '/', CANTIDAD_COMPETENCIAS, ': ');
+                                    Readln(robot.puntaje_array[i]);
+                                end;
+                        end;
+                    else
+                        begin
+                            //3.b)
+                            i := 0;
+                            corte := false;
+                            repeat
+                                Write('Ingrese el puntaje de la competencia ', i, ': ');
+                                Readln(entrada);
+                                if entrada >= 0 then // corta con cualquier numero negativo por ej -1
+                                    agregarPuntaje(robot.puntaje_lista, entrada)
+                                else
+                                    corte = true;
+                                i := i + 1;
+                            until corte;
+                        end;
+                end;
+        end;
+end;
+
+// 4_Simulacion de inscripcion ->
 
 var
     robot: TRobot;
     out: boolean;
 begin
-
+    out := false;
     robot.codigo := 'ABC12345677AB4574C';// ABC123 45677 B4574AC
     robot.id := 123;
     robot.fabricanteCUIT := 211;
@@ -227,7 +349,7 @@ begin
     // robot.codigo := 'ABC12345677B4574AC';// ABC123 45677 B4574AC
 
     // 3_Verificación de fabricante habilitado
-    verificarFabricanteHabilitado(fabricantes, 'SynthTech', 4, out); // TRUE
+    // verificarFabricanteHabilitado(fabricantes, 'SynthTech', 4, out); // TRUE
     // verificarFabricanteHabilitado(fabricantes, 'SynthTeche', 4, out); // FALSE
     // verificarFabricanteHabilitado(fabricantes, 'SynthTech', 12, out); // FALSE
     Writeln(out);
