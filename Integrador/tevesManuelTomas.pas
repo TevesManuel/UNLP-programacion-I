@@ -16,6 +16,7 @@ type
     TFabricantes = array[1..MAX_FABRICANTES] of TFabricante;
 
     TPuntaje = record
+        ID: integer;
         competencia: string;
         puntaje: integer;
     end;
@@ -327,39 +328,101 @@ end;
 
 // 4_Simulacion de inscripcion ->
 
+procedure probar1;
 var
     robot: TRobot;
-    out: boolean;
 begin
-    out := false;
-    robot.codigo := 'ABC12345677AB4574C';// ABC123 45677 B4574AC
     robot.id := 123;
     robot.fabricanteCUIT := 211;
-    //1_Validación de ID del robot 
-    // Writeln(validarID(robot)); // TRUE
-    // robot.id := 211;
-    // robot.fabricanteCUIT := 123;
-    // Writeln(validarID(robot)); // FALSE
     
-    //2_Validación del código de robot
-    // Writeln(validarCodigo(robot)); // TRUE
-    // robot.codigo := 'ABC12345677BA4574C';// ABC123 45677 B4574AC
-    // Writeln(validarCodigo(robot)); // FALSE
-    // robot.codigo := 'ABC12345677BA4274C';// ABC123 45677 B4574AC
-    // Writeln(validarCodigo(robot)); // FALSE
-    // robot.codigo := 'ABC12325677B4574AC';// ABC123 25677 B4574AC
-    // Writeln(validarCodigo(robot)); // FALSE
-    // robot.codigo := 'ABC12354677B4574AC';// ABC123 54677 B4574AC
-    // Writeln(validarCodigo(robot)); // FALSE
-    // robot.codigo := 'A3412345677B4574AC';// A34123 45677 B4574AC
-    // Writeln(validarCodigo(robot)); // FALSE
-    // robot.codigo := 'ABCDE345677B4574AC';// ABCDE3 45677 B4574AC
-    // Writeln(validarCodigo(robot)); // FALSE
-    // robot.codigo := 'ABC12345677B4574AC';// ABC123 45677 B4574AC
+    if validarID(robot) = TRUE then
+        Writeln('[i] Prueba 1.1 pasada.')
+    else
+        Writeln('[!] Prueba 1.1 fallada.');
 
-    // 3_Verificación de fabricante habilitado
-    // verificarFabricanteHabilitado(fabricantes, 'SynthTech', 4, out); // TRUE
-    // verificarFabricanteHabilitado(fabricantes, 'SynthTeche', 4, out); // FALSE
-    // verificarFabricanteHabilitado(fabricantes, 'SynthTech', 12, out); // FALSE
-    Writeln(out);
+    robot.id := 211;
+    robot.fabricanteCUIT := 123;
+    if validarID(robot) = FALSE then
+        Writeln('[i] Prueba 1.2 pasada.')
+    else
+        Writeln('[!] Prueba 1.2 fallada.');
+end;
+
+procedure probar2;
+var
+    robot: TRobot;
+begin
+    robot.codigo := 'ABC12345677AB4574C';// ABC123 45677 B4574AC
+    
+    if validarCodigo(robot) = TRUE then
+        Writeln('[i] Prueba 2.1 pasada.')
+    else
+        Writeln('[i] Prueba 2.1 fallada.');
+        
+    robot.codigo := 'ABC12345677BA4574C';    
+    if validarCodigo(robot) = FALSE then
+        Writeln('[i] Prueba 2.2 pasada.')
+    else
+        Writeln('[i] Prueba 2.2 fallada.');
+        
+    robot.codigo := 'ABC12345677BA4274C';
+    if validarCodigo(robot) = FALSE then
+        Writeln('[i] Prueba 2.3 pasada.')
+    else
+        Writeln('[i] Prueba 2.3 fallada.');
+
+    robot.codigo := 'ABC12325677B4574AC';
+    if validarCodigo(robot) = FALSE then
+        Writeln('[i] Prueba 2.3 pasada.')
+    else
+        Writeln('[i] Prueba 2.3 fallada.');
+
+    robot.codigo := 'ABC12354677B4574AC';
+    if validarCodigo(robot) = FALSE then
+        Writeln('[i] Prueba 2.3 pasada.')
+    else
+        Writeln('[i] Prueba 2.3 fallada.');
+
+    robot.codigo := 'A3412345677B4574AC';
+    if validarCodigo(robot) = FALSE then
+        Writeln('[i] Prueba 2.4 pasada.')
+    else
+        Writeln('[i] Prueba 2.4 fallada.');
+
+    robot.codigo := 'ABCDE345677B4574AC';
+    if validarCodigo(robot) = FALSE then
+        Writeln('[i] Prueba 2.5 pasada.')
+    else
+        Writeln('[i] Prueba 2.5 fallada.');
+end;
+
+procedure probar3;
+var
+    salida: boolean;
+begin
+    salida := false;
+
+    verificarFabricanteHabilitado(fabricantes, 'SynthTech', 4, salida); // TRUE
+    if salida = TRUE then
+        Writeln('[i] Prueba 3.1 pasada.')
+    else
+        Writeln('[!] Prueba 3.1 fallada.');
+
+    verificarFabricanteHabilitado(fabricantes, 'SynthTeche', 4, salida); // FALSE
+    if salida = FALSE then
+        Writeln('[i] Prueba 3.2 pasada.')
+    else
+        Writeln('[!] Prueba 3.2 fallada.');
+
+    verificarFabricanteHabilitado(fabricantes, 'SynthTech', 12, salida); // FALSE
+    if salida = FALSE then
+        Writeln('[i] Prueba 3.3 pasada.')
+    else
+        Writeln('[!] Prueba 3.3 fallada.');
+end;
+
+begin
+    probar1();
+    probar2();
+    probar3();
 end.
