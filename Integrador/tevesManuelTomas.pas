@@ -15,9 +15,14 @@ type
 
     TFabricantes = array[1..MAX_FABRICANTES] of TFabricante;
 
+    TPuntaje = record
+        competencia: string;
+        puntaje: integer;
+    end;
+
     TListaPuntaje = ^ TNodoPuntaje;
     TNodoPuntaje = record
-        dato: integer;
+        dato: TPuntaje;
         sig: TListaPuntaje;
     end;
 
@@ -27,7 +32,7 @@ type
         nombre: string[70];
         fabricante: string[70];
         fabricanteCUIT: integer;
-        puntaje_array: array[0..CANTIDAD_COMPETENCIAS] of integer;
+        puntaje_array: array[0..CANTIDAD_COMPETENCIAS] of TPuntaje;
         puntaje_lista: TListaPuntaje;
     end;
 
@@ -211,7 +216,7 @@ end;
 
 // <- 4_Simulacion de inscripcion
 
-procedure agregarPuntaje(var lista: TListaPuntaje; newData: integer);
+procedure agregarPuntaje(var lista: TListaPuntaje; newData: TPuntaje);
 var
 
     actual: TListaPuntaje;
@@ -248,7 +253,7 @@ var
     fabricanteHabilitado: boolean;
     i: integer;
     corte: boolean;
-    entrada: integer;
+    entrada: TPuntaje;
 begin
     robot.nombre := '';
     while robot.nombre <> NOMBRE_CORTE_INSCRIPCION do
@@ -293,22 +298,26 @@ begin
                             //3.a)
                             for i := 0 to CANTIDAD_COMPETENCIAS do
                                 begin
+                                    Write('Ingrese el nombre de la competencia ', i, '/', CANTIDAD_COMPETENCIAS, ': ');
+                                    Readln(robot.puntaje_array[i].competencia);
                                     Write('Ingrese el puntaje de la competencia ', i, '/', CANTIDAD_COMPETENCIAS, ': ');
-                                    Readln(robot.puntaje_array[i]);
+                                    Readln(robot.puntaje_array[i].puntaje);
                                 end;
-                        end;
+                        end
                     else
                         begin
                             //3.b)
                             i := 0;
                             corte := false;
                             repeat
+                                Write('Ingrese el nombre de la competencia ', i, ': ');
+                                Readln(entrada.competencia);
                                 Write('Ingrese el puntaje de la competencia ', i, ': ');
-                                Readln(entrada);
-                                if entrada >= 0 then // corta con cualquier numero negativo por ej -1
+                                Readln(entrada.puntaje);
+                                if entrada.puntaje >= 0 then // corta con cualquier numero negativo por ej -1
                                     agregarPuntaje(robot.puntaje_lista, entrada)
                                 else
-                                    corte = true;
+                                    corte := true;
                                 i := i + 1;
                             until corte;
                         end;
