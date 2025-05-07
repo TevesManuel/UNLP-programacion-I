@@ -17,7 +17,6 @@ type
 
     TPuntaje = record
         ID: integer;
-        competencia: string;
         puntaje: integer;
     end;
 
@@ -26,6 +25,8 @@ type
         dato: TPuntaje;
         sig: TListaPuntaje;
     end;
+
+    TListasClasificadas = array[0..CANTIDAD_COMPETENCIAS]{11 elementos} of TListaPuntaje; // 11 listas de puntaje
 
     TRobot = record
         codigo: string[18];
@@ -217,16 +218,15 @@ end;
 
 // <- 4_Simulacion de inscripcion
 
-procedure agregarPuntaje(var lista: TListaPuntaje; newData: TPuntaje);
+procedure agregarPuntaje(var lista: TListaPuntaje; datoNuevo: TPuntaje);
 var
 
     actual: TListaPuntaje;
     nuevaLista: TListaPuntaje;
 
 begin
-
     new(nuevaLista);
-    nuevaLista^.dato := newData;
+    nuevaLista^.dato := datoNuevo;
     nuevaLista^.sig := Nil;
 
     if ( lista <> Nil ) then
@@ -244,7 +244,6 @@ begin
         lista := nuevaLista;
 
 end;
-
 
 procedure inscribirRobot(fabricantes: TFabricantes);
 var
@@ -299,8 +298,6 @@ begin
                             //3.a)
                             for i := 0 to CANTIDAD_COMPETENCIAS do
                                 begin
-                                    Write('Ingrese el nombre de la competencia ', i, '/', CANTIDAD_COMPETENCIAS, ': ');
-                                    Readln(robot.puntaje_array[i].competencia);
                                     Write('Ingrese el puntaje de la competencia ', i, '/', CANTIDAD_COMPETENCIAS, ': ');
                                     Readln(robot.puntaje_array[i].puntaje);
                                 end;
@@ -311,8 +308,6 @@ begin
                             i := 0;
                             corte := false;
                             repeat
-                                Write('Ingrese el nombre de la competencia ', i, ': ');
-                                Readln(entrada.competencia);
                                 Write('Ingrese el puntaje de la competencia ', i, ': ');
                                 Readln(entrada.puntaje);
                                 if entrada.puntaje >= 0 then // corta con cualquier numero negativo por ej -1
@@ -327,6 +322,51 @@ begin
 end;
 
 // 4_Simulacion de inscripcion ->
+
+// <- 5_Clasificación por puntaje
+procedure agregarPuntajeOrdenado(var lista: TListaPuntaje; datoNuevo: TPuntaje);
+var
+    nuevo, actual, anterior: TListaPuntaje;
+begin
+    new(nuevo);
+    nuevo^.dato := datoNuevo;
+    nuevo^.sig := Nil;
+
+    anterior := Nil;
+    actual := lista;
+
+    while (( actual <> Nil ) and ( actual^.dato.id < datoNuevo.id )) do
+        begin
+            anterior := actual;
+            actual := actual^.sig;
+        end;
+
+    if anterior = Nil then
+        begin
+            nuevo^.sig := lista;
+            lista := nuevo;
+        end
+    else
+        begin
+            nuevo^.sig := anterior^.sig;
+            anterior^.sig := nuevo;
+        end;
+end;
+
+procedure registrarRobot(var listas: TListasClasificadas; robot: TRobot);
+var
+    actual: TListaPuntaje;
+begin
+    actual := robot.puntaje_lista;
+    while actual <> Nil do
+        begin
+            actual^.dato.ID := robot.ID;
+            agregarPuntajeOrdenado(listas[actual^.dato.puntaje], actual^.dato);
+            actual := actual^.sig;
+        end;
+end;
+
+// 5_Clasificación por puntaje ->
 
 procedure probar1;
 var
@@ -421,8 +461,74 @@ begin
         Writeln('[!] Prueba 3.3 fallada.');
 end;
 
+procedure imprimirListaPuntaje(lista: TListaPuntaje);
+var
+    actual: TListaPuntaje;
+begin
+    actual := lista;
+    while actual <> Nil do
+        begin
+            Writeln('[', actual^.dato.ID, ']: ', actual^.dato.puntaje);
+            actual := actual^.sig;
+        end;    
+end;
+
+procedure imprimirListaClasificada(arrayListas: TListasClasificadas);
+var
+    i: integer;
+begin
+    for i := 0 to CANTIDAD_COMPETENCIAS do
+        begin
+            Writeln('Competencia nro ', i);
+            imprimirListaPuntaje(arrayListas[i]);
+        end;
+end;
+
+procedure procedureParaProbar5(var lista: TListaPuntaje; ID: integer; puntaje: integer);
+var
+    nuevoPuntaje: TPuntaje;
+begin
+    nuevoPuntaje.ID := ID;
+    nuevoPuntaje.puntaje := puntaje;
+    agregarPuntajeOrdenado(lista, nuevoPuntaje);
+end;
+
+procedure probar5;
+var
+    lista: TListaPuntaje;
+    listasClasificada: TListasClasificadas;
+    i: integer;
+    robot1: TRobot;
+    robot2: TRobot;
+begin
+    lista := Nil;
+    procedureParaProbar5(lista, 4, 2);
+    procedureParaProbar5(lista, 8, 6);
+    procedureParaProbar5(lista, 5, 3);
+    procedureParaProbar5(lista, 7, 9);
+    imprimirListaPuntaje(lista);
+    for i := 0 to CANTIDAD_COMPETENCIAS do
+        begin
+            listasClasificada[i] := Nil;
+        end;
+    robot1.ID := 204;
+    robot1.puntaje_lista := nil;
+    procedureParaProbar5(robot1.puntaje_lista, robot1.ID, 6);
+    procedureParaProbar5(robot1.puntaje_lista, robot1.ID, 4);
+    procedureParaProbar5(robot1.puntaje_lista, robot1.ID, 3);
+    robot2.ID := 101;
+    robot2.puntaje_lista := nil;
+    procedureParaProbar5(robot2.puntaje_lista, robot2.ID, 3);
+    procedureParaProbar5(robot2.puntaje_lista, robot2.ID, 4);
+    procedureParaProbar5(robot2.puntaje_lista, robot2.ID, 7);
+    registrarRobot(listasClasificada, robot1);
+    registrarRobot(listasClasificada, robot2);
+    imprimirListaClasificada(listasClasificada);
+end;
+
 begin
     probar1();
     probar2();
     probar3();
+    probar5();
 end.
