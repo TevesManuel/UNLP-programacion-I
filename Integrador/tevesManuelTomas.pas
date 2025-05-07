@@ -461,6 +461,11 @@ begin
         Writeln('[!] Prueba 3.3 fallada.');
 end;
 
+procedure probar4;
+begin
+    inscribirRobot(FABRICANTES);
+end;
+
 procedure imprimirListaPuntaje(lista: TListaPuntaje);
 var
     actual: TListaPuntaje;
@@ -530,5 +535,6 @@ begin
     probar1();
     probar2();
     probar3();
+    // probar4(); // Necesita entrada de usuario por eso esta comentado
     probar5();
 end.
