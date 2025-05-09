@@ -88,9 +88,9 @@ begin
     sumatoriaDigitos := total;
 end;
 
-function validarID(robot: TRobot): boolean;
+function validarID(ID: integer; fabricanteCUIT: integer): boolean;
 begin
-    if( sumatoriaDigitos(robot.ID) > sumatoriaDigitos(robot.fabricanteCUIT) ) then
+    if( sumatoriaDigitos(ID) > sumatoriaDigitos(fabricanteCUIT) ) then
         validarID := true
     else
         validarID := false;
@@ -109,7 +109,7 @@ begin
     esNum := ( character >= '1' ) and ( character <= '9' );
 end;
 
-function validarCodigo(robot: TRobot): boolean;
+function validarCodigo(codigo: string): boolean;
 var
     i: integer;
     i2: integer;
@@ -133,13 +133,13 @@ begin
         begin
             if( i <= 6 ) then
                 begin
-                    if ( esMayus(robot.codigo[i]) ) then
+                    if ( esMayus(codigo[i]) ) then
                         begin
                             mayusCount := mayusCount + 1;
                         end
-                    else if ( esNum(robot.codigo[i]) ) then
+                    else if ( esNum(codigo[i]) ) then
                         begin
-                            aNum[numbersCount] := robot.codigo[i];
+                            aNum[numbersCount] := codigo[i];
                             numbersCount := numbersCount + 1;
                         end
                     else
@@ -156,21 +156,21 @@ begin
                 begin
                     for i2 := 0 to (numbersCount-1) do
                         begin
-                            if(aNum[i2] = robot.codigo[i]) then
+                            if(aNum[i2] = codigo[i]) then
                                 salida := false;
                         end;
-                    if robot.codigo[i] < lastBNum then
+                    if codigo[i] < lastBNum then
                         salida := false;
-                    lastBNum := robot.codigo[i];
+                    lastBNum := codigo[i];
                 end;
             
             if( i > 11 ) then
                 begin
                     for i2 := 0 to (numbersCount-1) do
                     begin
-                        if(aNum[i2] = robot.codigo[i]) then
+                        if(aNum[i2] = codigo[i]) then
                             salida := false;
-                        if(robot.codigo[i] = 'B') then
+                        if(codigo[i] = 'B') then
                             begin
                                 if lastChar = 'A' then
                                     AB := true
@@ -180,7 +180,7 @@ begin
                     end;
                 end;
 
-            lastChar := robot.codigo[i];
+            lastChar := codigo[i];
             i := i + 1;
         end;
     
@@ -272,13 +272,13 @@ begin
             Writeln('Introducir el nombre de el fabricante: ');
             Readln(robot.fabricante);
             
-            IDvalido := validarID(robot);
+            IDvalido := validarID(robot.ID, robot.fabricanteCUIT);
             if not IDvalido then
                 begin
                     Writeln('[!] El ID no es valido.');
                 end;
             
-            codigoValido := validarCodigo(robot);
+            codigoValido := validarCodigo(robot.codigo);
             if not codigoValido then
                 begin
                     Writeln('[!] El codigo no es valido.');
@@ -375,14 +375,14 @@ begin
     robot.id := 123;
     robot.fabricanteCUIT := 211;
     
-    if validarID(robot) = TRUE then
+    if validarID(robot.id, robot.fabricanteCUIT) = TRUE then
         Writeln('[i] Prueba 1.1 pasada.')
     else
         Writeln('[!] Prueba 1.1 fallada.');
 
     robot.id := 211;
     robot.fabricanteCUIT := 123;
-    if validarID(robot) = FALSE then
+    if validarID(robot.id, robot.fabricanteCUIT) = FALSE then
         Writeln('[i] Prueba 1.2 pasada.')
     else
         Writeln('[!] Prueba 1.2 fallada.');
@@ -394,43 +394,43 @@ var
 begin
     robot.codigo := 'ABC12345677AB4574C';// ABC123 45677 B4574AC
     
-    if validarCodigo(robot) = TRUE then
+    if validarCodigo(robot.codigo) = TRUE then
         Writeln('[i] Prueba 2.1 pasada.')
     else
         Writeln('[i] Prueba 2.1 fallada.');
         
     robot.codigo := 'ABC12345677BA4574C';    
-    if validarCodigo(robot) = FALSE then
+    if validarCodigo(robot.codigo) = FALSE then
         Writeln('[i] Prueba 2.2 pasada.')
     else
         Writeln('[i] Prueba 2.2 fallada.');
         
     robot.codigo := 'ABC12345677BA4274C';
-    if validarCodigo(robot) = FALSE then
+    if validarCodigo(robot.codigo) = FALSE then
         Writeln('[i] Prueba 2.3 pasada.')
     else
         Writeln('[i] Prueba 2.3 fallada.');
 
     robot.codigo := 'ABC12325677B4574AC';
-    if validarCodigo(robot) = FALSE then
+    if validarCodigo(robot.codigo) = FALSE then
         Writeln('[i] Prueba 2.3 pasada.')
     else
         Writeln('[i] Prueba 2.3 fallada.');
 
     robot.codigo := 'ABC12354677B4574AC';
-    if validarCodigo(robot) = FALSE then
+    if validarCodigo(robot.codigo) = FALSE then
         Writeln('[i] Prueba 2.3 pasada.')
     else
         Writeln('[i] Prueba 2.3 fallada.');
 
     robot.codigo := 'A3412345677B4574AC';
-    if validarCodigo(robot) = FALSE then
+    if validarCodigo(robot.codigo) = FALSE then
         Writeln('[i] Prueba 2.4 pasada.')
     else
         Writeln('[i] Prueba 2.4 fallada.');
 
     robot.codigo := 'ABCDE345677B4574AC';
-    if validarCodigo(robot) = FALSE then
+    if validarCodigo(robot.codigo) = FALSE then
         Writeln('[i] Prueba 2.5 pasada.')
     else
         Writeln('[i] Prueba 2.5 fallada.');
