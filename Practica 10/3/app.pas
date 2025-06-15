@@ -30,7 +30,7 @@ type
     TVectorAnos     = array[anos] of integer;
     TVectorCarreras = array[codigosCarreras] of integer;
 
-procedure eliminarIngresante(var listaIngresantes: TLista, var act: TLista; var ant: TLista);
+procedure eliminarIngresante(var listaIngresantes: TLista; var act: TLista; var ant: TLista);
 var
     aux: TLista;
 begin
@@ -43,18 +43,18 @@ begin
         ant^.siguiente := act;
     end;
     dispose(aux);
-end.
+end;
 
-procedure procesarIngresante(aux: TLista, var vectorAnos: TVectorAnos, var vectorCarreras: TVectorCarreras);
+procedure procesarIngresante(aux: TLista; var vectorAnos: TVectorAnos; var vectorCarreras: TVectorCarreras);
 begin
     if aux^.dato.ciudadNatural = 'Chacabuco' then begin
         Writeln(aux^.dato.apellido);
     end;
-    vectorAnos[aux^.dato.fechaNacimiento.ano] = vectorAnos[aux^.dato.fechaNacimiento.ano] + 1;
-    vectorCarreras[aux^.dato.codigoCarrera] = vectorCarreras[aux^.dato.codigoCarrera] + 1;
+    vectorAnos[aux^.dato.fechaNacimiento.ano] := vectorAnos[aux^.dato.fechaNacimiento.ano] + 1;
+    vectorCarreras[aux^.dato.codigoCarrera] := vectorCarreras[aux^.dato.codigoCarrera] + 1;
 end;
 
-procedure procesarIngresantes(var listaIngresantes: TLista, var vectorAnos: TVectorAnos, var vectorCarreras: TVectorCarreras);
+procedure procesarIngresantes(var listaIngresantes: TLista; var vectorAnos: TVectorAnos; var vectorCarreras: TVectorCarreras);
 var
     ant: TLista;
     aux: TLista;
@@ -65,7 +65,7 @@ begin
     while( aux <> Nil ) do begin
 
         if aux^.dato.tituloSecu then begin
-            procesarIngresante(aux);
+            procesarIngresante(aux, vectorAnos, vectorCarreras);
 
             ant := aux;
             aux := aux^.siguiente;
@@ -136,7 +136,7 @@ var
 begin
     while ( l <> Nil ) do begin
         aux := l;
-        l^.siguiente
+        l := l^.siguiente;
         dispose(aux);
     end;
 end;
